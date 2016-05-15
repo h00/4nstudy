@@ -1,0 +1,17 @@
+Setup
+--
+
+From this directory run:
+
+virutalenv flask
+cd flask
+. venv/bin/activate
+pip install flask requests
+
+This should result in a directory structure that looks like:
+
+/<app_name>
+/<app_name>/app
+/<app_name>/app/static
+/<app_name>/app/templates
+/<app_name>/flask
