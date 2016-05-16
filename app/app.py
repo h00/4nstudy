@@ -28,16 +28,18 @@ def index():
                            title='Home',
                            body="This is a WIP")
 
-@app.route('/api/query/<string:word>', methods=['POST'])
-def query_word(word):
-    if not request.json or not 'source_lang' in request.json or not 'target_lang' in request.json:
+@app.route('/api/query', methods=['GET'])
+def query_word():
+
+    if not request.args['w'] or not request.args['t']:
         abort(400)
 
-    #word = request.json['string']
+    word = request.args['w']
     #sLang = request.json['source_lang'] 
     sLang = 'en' #source has to be english
-    tLang = request.json['target_lang'] 
+    tLang = request.args['t']
     resp=[]
+
 
     dictDefs = get_websters_def(word)
 
@@ -93,7 +95,12 @@ def get_websters_def(word):
         for sense in entry.findall('./sens'):
 
             definition=sense.find('./mc').text
-            syn=sense.find('./syn').text.split(',')
+            syn=sense.find('./syn').text
+            syns=[]
+            for s in syn.split(','):
+                syns.append(s.strip())
+                
+
 
             example=''
             for i in sense.find('./vi').itertext():
@@ -102,7 +109,7 @@ def get_websters_def(word):
             DefSense = {
                 'definition': definition,
                 'example': example,
-                'synonyms': syn
+                'synonyms': syns
             }
 
             dictDef['senses'].append(DefSense)
@@ -116,4 +123,4 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=int("80"))
